@@ -1,0 +1,26 @@
+site_name: Mojang
+
+theme:
+    name: readthedocs
+
+extra_css:
+  - css/extra.css
+
+nav:
+    - Installation:
+      - 'Getting Started': 'index.md'
+      - 'Reference': 'reference.md'
+
+    - MOJANGAPI:
+      - 'API Methods': 'api.md'
+
+    - MojangUser: 
+      - 'Authentication': 'authentication.md'
+      - 'Accessing Minecraft Profile': "profile.md"
+      - 'Accessing Mojang Account': "account.md"
+      - 'Accessing Session': "session.md"
+      - 'Other': 'other.md'
+
+    - META:
+        - 'License': 'license.md'
+        - 'Legal': 'legal.md'

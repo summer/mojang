@@ -1,0 +1,101 @@
+body
+{
+    color:black;
+}
+
+.wy-side-nav-search
+{
+    color:#000000; 
+}
+
+.rst-content tt.xref,a .rst-content tt,.rst-content tt.xref,.rst-content code.xref,a .rst-content tt,a .rst-content code
+{
+    font-weight:400;
+    color:#2980b9;
+
+}
+
+.rst-content code
+{
+    background:#f3f2f1;
+    border-radius:var(--border-radius);
+    font-size:100%;
+    color:#000;
+}
+    
+
+:root .rst-content code
+{
+    background:#f3f2f1;
+    border-radius:var(--border-radius);
+    font-size:100%;
+}
+
+.wy-menu
+{
+    font-size:17px;
+}
+
+
+body .wy-menu .caption
+{
+    padding-top:15px;
+    padding-bottom:25px;
+    color:black;
+    font-size:15px;
+}
+
+@font-face {
+    font-family: open sans;
+    color:black;
+    src:url(/_static/fonts/OpenSans-SemiBoldItalic.ttf) 
+    format("truetype");
+    font-weight:700;
+    font-style:italic}
+    
+:root{--border-radius: 0.5em}*{border-radius:var(--border-radius)} 
+
+li .rst-content .highlighted {
+    background:0 0;
+    padding:0;
+    text-shadow:0 0 4px #f1c40f,0 0 8px #f1c40f
+}
+
+.rst-content dl:not(.docutils) dt {
+    font-size:16px;
+    font-family:ubuntu mono, monospace
+}
+
+.rst-content tt.literal,.rst-content tt.lit,.rst-content dl:not(.docutils) code {
+    font-weight:400
+}
+
+.wy-menu-vertical p.caption {
+    color:#6f6f6f;
+    font-size:92%
+}
+
+.wy-menu-vertical a {
+    color:#b3b3b3;
+    font-size:92%
+}
+
+.rst-content div[class^=highlight] pre .hll {
+    border-radius:0
+}
+
+
+.rst-content dl:not(.docutils) dt {
+    font-size:16px;
+    font-family:ubuntu mono,monospace
+}
+
+.sig-prename
+{
+    font-weight:400;
+    color:black;
+}
+.sig-name 
+{
+    color:black;   
+}
