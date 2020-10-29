@@ -7,7 +7,7 @@ required_modules = ["requests"]
 
 setuptools.setup(
     name="mojang",
-    version="0.1.2",
+    version="0.1.3",
     author="summer",
     description="A Python wrapper for the Mojang API and Minecraft website",
     long_description=long_description,
