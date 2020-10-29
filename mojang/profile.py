@@ -56,8 +56,8 @@ class Profile:
 
     def _update_name_data(self) -> None:
         data = self._session._request("get", f"https://api.mojang.com/user/profile/{self.id}/name").json()
-        self.name_changed_at = data["changedAt"]
-        self.is_name_change_allowed = data["nameChangeAllowed"]
+        self.name_changed_at = data.get("changedAt")
+        self.is_name_change_allowed = data.get("nameChangeAllowed")
 
     def _update_profile_data(self) -> None:
         data = self._session._request("get", "https://api.mojang.com/user/profiles/agent/minecraft").json()[0]
