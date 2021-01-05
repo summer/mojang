@@ -1,3 +1,5 @@
+**NOTE:** As of December 2020, parts of the API might be obsolete now; e.g., logging into accounts, and some other functions might be broken as well. So use at your own risk. I've taken a break from programming to solely focus on school instead, so if nothing more, you can still use this project as a type of blueprint and incorporate parts of its source code into your own projects.
+
 #
 [![PyPI version](https://badge.fury.io/py/mojang.svg)](https://badge.fury.io/py/mojang)![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
 
