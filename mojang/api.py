@@ -60,7 +60,7 @@ class MojangAPI:
             timestamp_now = int(time.time() * 1000.0)
             timestamp = int((timestamp_now - cls._NAME_HOLD_DURATION) / 1000)
 
-        resp = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{username}?at={timestamp}")
+        resp = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{username}?at={timestamp}",verify=False)
         if resp.ok:
             try:
                 return resp.json()["id"]
@@ -83,7 +83,7 @@ class MojangAPI:
         """
         if len(names) > 10:
             names = names[:10]
-        data = requests.post("https://api.mojang.com/profiles/minecraft", json=names).json()
+        data = requests.post("https://api.mojang.com/profiles/minecraft", json=names,verify=False).json()
 
         if not isinstance(data, list):
             if data.get("error"):
@@ -108,7 +108,7 @@ class MojangAPI:
         Returns:
             str: UUID if username exists. None otherwise. 
         """
-        resp = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
+        resp = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}",verify=False)
         if resp.ok:
             return resp.json()["name"]
         return None
@@ -127,7 +127,7 @@ class MojangAPI:
         uuid = cls.get_uuid(username)
         if not uuid:
             raise ValueError("Username is invalid. Failed to convert username to UUID")
-        resp = requests.get(f"https://api.mojang.com/user/profiles/{uuid}/names")
+        resp = requests.get(f"https://api.mojang.com/user/profiles/{uuid}/names",verify=False)
         name_changes = [name_change for name_change in reversed(resp.json())]
         for i, name_info in enumerate(name_changes):
             if name_info["name"].lower() == username.lower():
@@ -152,7 +152,7 @@ class MojangAPI:
             is_legacy_profile (bool): Check if the profile is legacy
             timestamp (int): Timestamp of when the profile was retrieved
         """
-        resp = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
+        resp = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}",verify=False)
 
         try:
             value = resp.json()["properties"][0]["value"]
@@ -173,7 +173,7 @@ class MojangAPI:
             list: A list of dictionaries, each of which contains a name:changed_to_at pair. 
                 If changed_to_at is set to 0, it is because it is the profile's first name.
         """
-        name_history = requests.get(f"https://api.mojang.com/user/profiles/{uuid}/names").json()
+        name_history = requests.get(f"https://api.mojang.com/user/profiles/{uuid}/names",verify=False).json()
 
         name_data = list()
         for data in name_history:
@@ -195,7 +195,7 @@ class MojangAPI:
             dict: Returns dictionary with status of various Mojang services. 
                 Possible values are green (no issues), yellow (some issues), red (service unavailable).
         """
-        data = requests.get("https://status.mojang.com/check").json()
+        data = requests.get("https://status.mojang.com/check",verify=False).json()
         servers = dict()
         for server_data in data:
             for k, v in server_data.items():
@@ -231,7 +231,7 @@ class MojangAPI:
         if not options:
             raise MojangError("Invalid parameters supplied. Include at least one metric key.")
 
-        data = requests.post("https://api.mojang.com/orders/statistics", json={"metricKeys": options}).json()
+        data = requests.post("https://api.mojang.com/orders/statistics", json={"metricKeys": options},veriy=False).json()
         metrics = dict()
         metrics["total"] = data["total"]
         metrics["last24h"] = data["last24h"]
@@ -257,7 +257,7 @@ class MojangAPI:
         }
 
         account = dict()
-        data = requests.post("https://authserver.mojang.com/refresh", json=payload).json()
+        data = requests.post("https://authserver.mojang.com/refresh", json=payload,verify=False).json()
 
         account["username"] = data["user"]["username"]
         account["uuid"] = data["user"]["id"]
