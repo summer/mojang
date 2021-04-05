@@ -14,13 +14,6 @@ nav:
     - MOJANGAPI:
       - 'API Methods': 'api.md'
 
-    - MojangUser: 
-      - 'Authentication': 'authentication.md'
-      - 'Accessing Minecraft Profile': "profile.md"
-      - 'Accessing Mojang Account': "account.md"
-      - 'Accessing Session': "session.md"
-      - 'Other': 'other.md'
-
     - META:
         - 'License': 'license.md'
         - 'Legal': 'legal.md'
