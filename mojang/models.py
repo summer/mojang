@@ -1,7 +1,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2020 https://github.com/summer
+Copyright (c) 2021 https://github.com/summer
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -56,28 +56,3 @@ class UserProfile(MojangObject):
             self.skin_url = data["textures"]["SKIN"]["url"]
             if data["textures"]["SKIN"].get("metadata"):
                 self.skin_model = "slim"
-
-
-class Skin(MojangObject):
-    def __init__(self, skin: dict):
-        self.type = skin["type"]
-        self.url = skin["url"]
-        self.texture_id = skin["textureId"]
-        self.is_visible = skin["visible"]
-        self.is_selected = skin["selected"]
-        self.is_deleted = skin["deleted"]
-        try:
-            self.model = skin["metadata"]["model"]
-        except KeyError:
-            self.model = "classic"
-
-
-class Cape(MojangObject):
-    def __init__(self, cape: dict):
-        self.name = cape["alias"]
-        self.type = cape["type"]
-        self.url = cape["url"]
-        self.version = cape["version"]
-        self.is_visible = cape["visible"]
-        self.is_selected = cape["selected"]
-        self.is_deleted = cape["deleted"]
