@@ -156,7 +156,7 @@ class MojangAPI:
 
         try:
             value = resp.json()["properties"][0]["value"]
-        except KeyError:
+        except (KeyError, json.decoder.JSONDecodeError):
             return None
         user_profile = ast.literal_eval(base64.b64decode(value).decode())
         return UserProfile(user_profile)
