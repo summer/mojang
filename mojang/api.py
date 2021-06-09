@@ -110,7 +110,10 @@ class MojangAPI:
         """
         resp = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}")
         if resp.ok:
-            return resp.json()["name"]
+            try:
+                return resp.json()["name"]
+            except json.decoder.JSONDecodeError:
+                return None
         return None
 
 
