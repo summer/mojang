@@ -1,0 +1,21 @@
+.doc-function {
+    margin-top: 55px;
+}
+
+.highlight.language-python .n {
+    font-weight: 700;
+    color: #4051B5;
+}
+
+div.doc-contents:not(.first) {
+    padding-left: 20px;
+    border-left: 4px solid rgba(230, 230, 230);
+}
+
+.example .highlight {
+    font-size: 15px !important;
+}
+
+.doc-class-bases {
+    display: none;
+}
