@@ -30,9 +30,9 @@ import re
 
 import requests
 
-from .http_client import HTTPClient
-from .types import Profile, Skin, Cape, NameInformation
-from .errors import (
+from mojang.http_client import HTTPClient
+from mojang.types import Profile, Skin, Cape, NameInformation
+from mojang.errors import (
     MojangError,
     BadRequest,
     LoginFailure,

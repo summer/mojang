@@ -1,7 +1,7 @@
-from .api import API
-from .client import Client
+from mojang.api import API
+from mojang.client import Client
 
-from .errors import (
+from mojang.errors import (
     MojangError,
     LoginFailure,
     BadRequest,

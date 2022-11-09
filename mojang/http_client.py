@@ -31,7 +31,7 @@ import requests
 from http.client import HTTPConnection
 
 
-from .errors import (
+from mojang.errors import (
     MojangError,
     BadRequest,
     Forbidden,

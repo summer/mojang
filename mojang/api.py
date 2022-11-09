@@ -30,9 +30,9 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from .types import UserProfile
-from .http_client import HTTPClient
-from .errors import MojangError
+from mojang.types import UserProfile
+from mojang.http_client import HTTPClient
+from mojang.errors import MojangError
 
 log = logging.getLogger(__name__)
 
