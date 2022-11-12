@@ -240,7 +240,7 @@ class API(HTTPClient):
             ```py
             servers = api.get_blocked_servers()
 
-            >> for hash in servers:
+            for hash in servers:
                 print(hash)
             ```
         """
