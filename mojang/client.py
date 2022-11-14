@@ -186,7 +186,7 @@ class MojangAuth(HTTPClient):
         resp = self.request(
             "post",
             "https://xsts.auth.xboxlive.com/xsts/authorize",
-            ignore_codes=401,
+            ignore_codes=[401],
             json=json_data,
         )
 
