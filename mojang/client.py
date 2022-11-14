@@ -465,7 +465,8 @@ class Client(MojangAuth):
 
         if variant != "slim" and variant != "classic":
             raise ValueError("Skin variant must be set to either slim or classic.")
-        elif not image_path and not url:
+
+        if not image_path and not url:
             raise TypeError(
                 "Missing required parameters. Please supply a skin URL or a skin image path."
             )
@@ -483,10 +484,6 @@ class Client(MojangAuth):
             resp = self.request(
                 "post", f"{_BASE_API_URL}/minecraft/profile/skins", files=files
             )
-
-        if not resp.ok:
-            error_message = resp.json()["errorMessage"]
-            raise MojangError(error_message)
 
     def copy_skin(
         self,
