@@ -44,7 +44,7 @@ else:
 
     profile = api.get_profile(uuid)
     print(f"Notch's skin URL is {profile.skin_url}")
-    print(f"Notch's skin model is {profile.skin_model}")
+    print(f"Notch's skin variant is {profile.skin_variant}")
     print(f"Notch's cape URL is {profile.cape_url}")
 ```
 
