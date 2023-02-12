@@ -231,20 +231,6 @@ class Client(MojangAuth):
 
         Returns:
             A `Profile` object that contains information about a Minecraft profile
-
-        Example:
-            ```py
-            profile = client.get_profile()
-
-            print(profile.id)
-            print(profile.name)
-
-            for skin in profile.skins:
-                print(skin.id)
-                print(skin.enabled)
-                print(skin.url)
-                print(skin.variant)
-            ```
         """
         data = self.request("get", f"{_BASE_API_URL}/minecraft/profile").json()
 
@@ -286,17 +272,6 @@ class Client(MojangAuth):
             A dictionary object that contains information about the account's username. \
                 Possible keys are `changed_at`, `created_at`, \
                 and `name_change_allowed`.
-
-        Example:
-            ```py
-            name_info = client.get_name_change_info()
-
-            if name_info.name_change_allowed:
-                print("A name change is allowed")
-
-            print(name_info.changed_at)
-            print(name_info.created_at)
-            ```
         """
         data = self.request(
             "get", f"{_BASE_API_URL}/minecraft/profile/namechange"
@@ -321,14 +296,6 @@ class Client(MojangAuth):
 
         Returns:
             `True` if the username is available; `False` if the username is invalid or already taken
-
-        Example:
-            ```py
-            if client.is_username_available("Notch"):
-                print("The username Notch is available.")
-            else:
-                print("The username Notch is not available.")
-            ```
         """
         if len(username) < 2 or len(username) > 16:
             raise ValueError("Username size must be between 3 and 16 characters")
@@ -392,15 +359,6 @@ class Client(MojangAuth):
             A dictionary object that contains information about whether the username was claimed. \
                 Possible keys are `success` (which contains `True` or `False`) and `error` with an error message \
                 (only if the function fails).
-
-        Example:
-            ```py
-            data = client.change_username("Notch")
-            if not data["success"]:
-                print(data["error"])
-            elif data["success"]:
-                print("The username Notch has successfully been claimed.")
-            ```
         """
 
         resp = self.request(
@@ -450,16 +408,6 @@ class Client(MojangAuth):
 
         Raises:
             MojangError: If the skin could not be changed for some reason.
-
-        Example:
-            ```py
-            # Change your skin via URL
-            skin_url = "http://textures.minecraft.net/texture/2ff6d970b1b6243fe5a44c5ac540c320506987a5c55ba99a90f758b00d3e05a1"
-            client.change_skin(variant="slim", url=skin_url)
-
-            # Change your skin via file path / image name
-            client.change_skin(variant="classic", image_path="skin.png")
-            ```
         """
         variant = variant.strip().lower()
 
@@ -500,12 +448,6 @@ class Client(MojangAuth):
 
         Raises:
             MojangError: If an invalid username or UUID is supplied.
-
-        Example:
-            ```py
-            # Copy Notch's skin
-            client.copy_skin("Notch")
-            ```
         """
         if not username and not uuid:
             raise TypeError("Either a username or a UUID must be supplied")
@@ -552,15 +494,6 @@ class Client(MojangAuth):
 
         Args:
             variant: Set "slim" for the slim model, or "classic" for the default.
-
-        Example:
-            ```py
-            # Change your skin model to classic
-            client.change_skin_variant("classic")
-
-            # Change your skin model to slim
-            client.change_skin_variant("slim")
-            ```
         """
         profile = self.get_profile()
         self.change_skin(url=profile.skins[0].url, variant=variant)
