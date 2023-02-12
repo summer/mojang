@@ -78,6 +78,6 @@ Alternatively, supply a Bearer token and skip the Microsoft authentication proce
 ```py
 client = Client(bearer_token="MOJANG_BEARER_TOKEN_HERE")
 ```
-If authentication fails, such as due to an incorrect email or password, a `LoginFailure` exception will be thrown.
+If authentication fails, such as due to an incorrect email or password, a `LoginFailure` exception will occur.
 
 - [Full Client API documentation](https://mojang.readthedocs.io/en/latest/client/)

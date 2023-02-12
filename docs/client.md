@@ -6,3 +6,5 @@
         show_properties: false
         show_root_toc_entry: false
         members_order: source
+        show_bases: false
+        heading_level: 3

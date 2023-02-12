@@ -4,6 +4,7 @@ repo_name: summer/mojang
 repo_url: https://github.com/summer/mojang
 edit_uri: ""
 
+
 theme:
   name: "material"
   features:
@@ -24,11 +25,13 @@ plugins:
 
 nav:
   - Getting Started: "index.md"
-  - Public API Methods: "api.md"
-  - Client API Methods: "client.md"
-  
-  - Other:
-    - Code Examples: "examples.md"
+  - Code Examples: "examples.md"
+
+  - Other:  
+    - Public API Methods: "api.md"
+    - Client API Methods: "client.md"
+    - Exceptions: "exceptions.md"
+    - Models: "models.md"
 
   - META:
       - "License": "license.md"
@@ -42,3 +45,4 @@ markdown_extensions:
   - pymdownx.superfences
   - toc:
       permalink: "#"
+      toc_depth: 3

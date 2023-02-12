@@ -1,5 +1,13 @@
+tbody {
+    font-size: 15px;
+}
+
 .doc-function {
     margin-top: 55px;
+}
+
+.doc-object:last-of-type {
+    margin-bottom: 30px;
 }
 
 .highlight.language-python .n {
@@ -7,15 +15,15 @@
     color: #4051B5;
 }
 
-div.doc-contents:not(.first) {
+.doc-contents:not(.first) {
     padding-left: 20px;
     border-left: 4px solid rgba(230, 230, 230);
 }
 
-.example .highlight {
-    font-size: 15px !important;
+.doc .doc-contents .first {
+    display: none;
 }
 
-.doc-class-bases {
-    display: none;
+.md-typeset a {
+    text-decoration: underline;
 }

@@ -6,9 +6,9 @@ from mojang import Client
 client = Client("YOUR_MICROSOFT_EMAIL", "YOUR_PASSWORD")
 ```
 
-A `LoginFailure` exception can occur due to an incorrect email or password.
-
 Always make sure that you are using your Microsoft credentials to login. The Mojang account must already be migrated to Microsoft, as the `Mojang` package does not support migration features.
+
+If your login credentials are incorrect, a `LoginFailure` exception will occur.
 
 
 ### **Logging in with a Bearer token**
@@ -19,11 +19,15 @@ from mojang import Client
 client = Client(bearer_token="BEARER_TOKEN_HERE")
 ```
 
-Logging in with a Bearer token is faster and more efficient, as the entire Microsoft authentication flow is skipped and the session headers are set directly. This is why it would be good practice to save the Bearer token for future reuse after initially logging in with your Microsoft credentials.
+Logging in with a Bearer token is faster and more efficient, as the entire Microsoft authentication flow is skipped and the session headers are set directly. If you're logging in a lot, it would be good practice to save the Bearer token for future use after logging in once with your Microsoft credentials.
 
 The Bearer token can always be obtained by accessing the `bearer_token` attribute after logging in:
 ```py
-client.bearer_token
+# login normally using your Microsoft account first
+client = Client("YOUR_MICROSOFT_EMAIL", "YOUR_PASSWORD")
+
+# print / save the bearer token
+print(client.bearer_token)
 ```
 
 
@@ -36,20 +40,22 @@ from mojang import Client
 
 session = requests.Session()
 
-# Simply pass the session to Client
+# Simply pass the session to Client when logging in
 client = Client("YOUR_MICROSOFT_EMAIL", "YOUR_PASSWORD", session=session)
 
-# Access the session, which is already authenticated to Mojang
+# Access the session, which is now already authenticated to Mojang
 resp = client.session.get("https://api.minecraftservices.com/minecraft/profile")
 
 print(resp.json())
 
 # Alternatively, use the client's custom request handler
-# This way, ratelimiting and errors are handled
+# This way, ratelimiting and errors are handled for you
 client.request("get", "https://api.minecraftservices.com/minecraft/profile")
 ```
 
-By using a custom `requests` session, you can optionally use proxies, custom user agents, and more, while the authentication process and everything else is taken care of for you. Keep in mind, you can also pass a custom session object to Mojang's Public API, so much of the same applies.
+By using a custom `requests` session, you can optionally use proxies, custom headers, and more, while the authentication process and everything else is taken care of for you.
+
+Keep in mind, you can also pass a custom session object to Mojang's Public API, so much of the same applies.
 
 ```py
 import requests
@@ -65,9 +71,7 @@ api.get_username("Notch")
 
 ### **Enabling rate limit handling**
 
-By default, the API will throw an exception whenever it is being rate limited. To enable rate limit handling, just set `retry_on_rate_limit` to `True` when creating a new Client instance or API instance. Both the Client API and Public API will sleep for a specified amount of time before attempting the request again. 
-
-The sleep duration can be changed by adjusting `ratelimit_sleep_time`.
+By default, the API will throw a `TooManyRequests` exception whenever it is being rate limited. To enable rate limit handling, just set `retry_on_rate_limit` to `True` when creating a new Client instance or API instance. The library will then sleep for a specified amount of time before attempting the request again. 
 
 **Client instance:**
 ```py
@@ -83,8 +87,8 @@ api = API(retry_on_rate_limit=True, ratelimit_sleep_duration=60)
 ```
 
 
-### **Enable debug mode**
-Setting `debug_mode` to `True` will set the logging level to `DEBUG` and all library requests will be shown in the console. 
+### **Enabling debug mode**
+Setting `debug_mode` to `True` will set the logging level to `DEBUG` and all library and network requests will be printed to the console. 
 ```py
 client = Client("YOUR_MICROSOFT_EMAIL", "YOUR_PASSWORD", 
                 debug_mode=True)
@@ -103,14 +107,14 @@ print(f"Profile ID: {profile.id} | Profile Name: {profile.name}")
 
 print(f"This profile has {len(profile.capes)} capes")
 
-# Print information about the profile's skins
+# Print the profile's skins
 for skin in profile.skins:
     print(skin.id)
     print(skin.enabled)
     print(skin.url)
     print(skin.variant)
 
-# Print information about the profile's capes
+# Print the profile's capes
 for cape in profile.capes:
     print(cape.id)
     print(cape.enabled)
@@ -122,23 +126,20 @@ for cape in profile.capes:
 ```py
 name_info = client.get_name_change_info()
 
-# The dates are already converted to datetime objects for you
-# Do not forget to import the datetime module if using this code
 delta = datetime.today() - name_info.created_at.replace(tzinfo=None)
 
 print(f"This account was created {delta.days} days ago.")
+print(f"The name was last changed on {name_info.changed_at}")
 
 if name_info.name_change_allowed:
     print("A name change is allowed")
 
-if name_info.changed_at:
-    print(f"The name was last changed on {name_info.changed_at}")
 ```
 
 
 ### **Changing your Minecraft username**
 
-Before attempting to claim a Minecraft username, you should make sure that your account has an available name change, as shown in the previous example. You can only change your username once every 30 days.
+Before changing your Minecraft username, you should always make sure that your account has an available name change, as shown in the above example. You can only change your username once every 30 days.
 
 You should also make sure that the username you want is available:
 
@@ -156,11 +157,15 @@ If you're checking usernames in bulk, you may get ratelimited pretty quickly usi
 ```py
 from mojang import API
 
-api = API()
+api = API(retry_on_rate_limit=True, ratelimit_sleep_time=600)
 
-username = "Notch"
-if not api.get_username(username):
-    print(f"{username} isn't free.")
+usernames = ["Notch", "Bob", "Alice"]
+
+for username in usernames:
+    if api.get_username(username):
+        print(f"{username} is taken.")
+    else:
+        print(f"{username} is not taken.")
 ```
 
 
