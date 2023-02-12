@@ -73,16 +73,6 @@ class API(HTTPClient):
 
         Returns:
             The UUID (`str`) or `None` if the username does not exist.
-
-        Example:
-            ```py
-            uuid = api.get_uuid("Notch")
-
-            if not uuid:
-                print("The username Notch is not taken")
-            else:
-                print(f"Notch's UUID is {uuid}")
-            ```
         """
 
         if timestamp:
@@ -107,16 +97,6 @@ class API(HTTPClient):
         Returns:
             A dictionary object that contains the converted usernames. Names are also case-corrected.
             If a username does not exist, it will not be included in the returned dictionary.
-
-        Example:
-            ```py
-            usernames = ["Notch", "Herobrine", "Dream"]
-
-            players = api.get_uuids(usernames)
-
-            for name, uuid in players.items():
-                print(name, uuid)
-            ```
         """
         if not isinstance(names, list):
             raise TypeError(
@@ -148,14 +128,6 @@ class API(HTTPClient):
 
         Returns:
             The username. `None` otherwise.
-
-        Example:
-            ```py
-            username = api.get_username("e149b689-d25c-4ace-a9ea-4be1e8407f85")
-
-            if not username:
-                print("UUID does not appear to be valid.")
-            ```
         """
         resp = self.request(
             "get",
@@ -179,19 +151,6 @@ class API(HTTPClient):
 
         Returns:
             `UserProfile` object. Otherwise, `None` if the profile does not exist.
-
-        Example:
-            ```py
-            uuid = api.get_uuid("Notch")
-
-            if uuid:
-                profile = api.get_profile(uuid)
-
-                print(profile.name)
-                print(profile.skin_url)
-                # other possible profile attributes include skin_model, cape_url,
-                # is_legacy_profile, and timestamp
-            ```
         """
         resp = self.request(
             "get",
@@ -235,14 +194,6 @@ class API(HTTPClient):
 
         Returns:
             Blacklisted server hashes
-
-        Example:
-            ```py
-            servers = api.get_blocked_servers()
-
-            for hash in servers:
-                print(hash)
-            ```
         """
         resp = self.request("get", f"{_SESSIONSERVER_BASE_URL}/blockedservers")
         return resp.text.splitlines()
@@ -258,26 +209,6 @@ class API(HTTPClient):
 
         Returns:
             A dictionary object that contains the new access token and other account and profile information
-
-        Example:
-            ```py
-            access_token = "YOUR_ACCESS_TOKEN"
-            client_token = "YOUR_CLIENT_TOKEN"
-
-            account = api.refresh_access_token(access_token, client_token)
-
-            print("The new access token is " + account["access_token"])
-
-            # main keys include...
-            print(account["access_token"])
-            print(account["client_token"])
-            print(account["username"])
-            print(account["uuid"])
-
-            # these will only be populated if the account has a Minecraft profile
-            print(account["profile_id"])
-            print(account["profile_name"])
-            ```
         """
         payload = {
             "accessToken": access_token,
