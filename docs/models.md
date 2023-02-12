@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/css/models.css" />
+<link rel="stylesheet" href="/en/latest/css/models.css" />
 
 # Models / types
 
