@@ -3,7 +3,7 @@ import setuptools
 with open("README.md") as f:
     long_description = f.read()
 
-required_modules = ["requests>=2.27.0,<3", "pydantic==1.10.4"]
+required_modules = ["requests>=2.27.0,<3", "pydantic==1.10.5"]
 
 setuptools.setup(
     name="mojang",
