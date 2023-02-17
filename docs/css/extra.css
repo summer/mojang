@@ -1,0 +1,29 @@
+tbody {
+    font-size: 15px;
+}
+
+.doc-function {
+    margin-top: 55px;
+}
+
+.doc-object:last-of-type {
+    margin-bottom: 30px;
+}
+
+.highlight.language-python .n {
+    font-weight: 700;
+    color: #4051B5;
+}
+
+.doc-contents:not(.first) {
+    padding-left: 20px;
+    border-left: 4px solid rgba(230, 230, 230);
+}
+
+.doc .doc-contents .first {
+    display: none;
+}
+
+.md-typeset a {
+    text-decoration: underline;
+}

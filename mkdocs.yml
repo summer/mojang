@@ -1,0 +1,48 @@
+site_name: Mojang
+site_author: summer
+repo_name: summer/mojang
+repo_url: https://github.com/summer/mojang
+edit_uri: ""
+
+
+theme:
+  name: "material"
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+
+extra_css:
+  - css/extra.css
+
+plugins:
+  - search
+  - mkdocstrings:
+      custom_templates: docs/templates
+      watch:
+        - mojang
+
+nav:
+  - Getting Started: "index.md"
+  - Code Examples: "examples.md"
+
+  - Other:  
+    - Public API Methods: "api.md"
+    - Client API Methods: "client.md"
+    - Exceptions: "exceptions.md"
+    - Models: "models.md"
+
+  - META:
+      - "License": "license.md"
+      - "Legal": "legal.md"
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.magiclink
+  - pymdownx.saneheaders
+  - pymdownx.superfences
+  - toc:
+      permalink: "#"
+      toc_depth: 3

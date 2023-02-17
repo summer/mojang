@@ -1,0 +1,23 @@
+.doc-label-class-attribute {
+    display: none;
+}
+
+
+.doc .doc-heading {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.doc .doc-heading .n {
+    color: black;
+}
+
+.doc .doc-heading .nb:first-of-type {
+    color: black;
+}
+
+.md-typeset code {
+    background-color: transparent;
+    color: #4051b5;
+}
