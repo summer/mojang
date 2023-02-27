@@ -58,6 +58,12 @@ class MojangAuth(HTTPClient):
 
         self._validate_session()
 
+    def _set_authorization_header(self, bearer_token: str) -> None:
+        if not bearer_token.startswith("Bearer"):
+            bearer_token = f"Bearer {bearer_token}"
+
+        self.session.headers.update({"Authorization": f"{bearer_token}"})
+ 
     def _validate_session(self) -> None:
         resp = self.request("get", f"{_BASE_API_URL}/entitlements/mcstore", ignore_codes=[401])
 
@@ -77,12 +83,6 @@ class MojangAuth(HTTPClient):
         resp = self.request("get", f"{_BASE_API_URL}/minecraft/profile")
         if not resp.ok:
             raise MissingMinecraftProfile
-
-    def _set_authorization_header(self, bearer_token: str) -> None:
-        if not bearer_token.startswith("Bearer"):
-            bearer_token = f"Bearer {bearer_token}"
-
-        self.session.headers.update({"Authorization": f"{bearer_token}"})
 
     def _get_oauth2_token_and_url(self) -> Tuple[str, str]:
         """Begins the Microsoft OAuth2 Flow"""
