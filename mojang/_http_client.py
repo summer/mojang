@@ -20,7 +20,7 @@ from mojang.errors import (
 log = logging.getLogger(__name__)
 
 
-class HTTPClient:
+class _HTTPClient:
     def __init__(
         self,
         session: Optional[requests.Session] = None,
@@ -85,7 +85,9 @@ class HTTPClient:
 
         if resp.status_code == 429:
             if self.retry_on_ratelimit:
-                log.warning(f"We are being ratelimited. Sleeping for {self.ratelimit_sleep_time} seconds.")
+                log.warning(
+                    f"We are being ratelimited. Sleeping for {self.ratelimit_sleep_time} seconds."
+                )
                 time.sleep(self.ratelimit_sleep_time)
                 return self.request(method, url, ignore_codes, **kwargs)
             else:

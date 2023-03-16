@@ -9,6 +9,6 @@ NOTCH_SKIN_URL = "http://textures.minecraft.net/texture/2ff6d970b1b6243fe5a44c5a
 INVALID_USERNAME = "username_that_does_not_exist"
 INVALID_UUID = "uuid_that_does_not_exist"
 
-AVAILABLE_USERNAME = "summer033567test"
+AVAILABLE_USERNAME = "SummerAliceBobTest"
 
 BEARER_TOKEN = "BEARER_TOKEN_HERE"

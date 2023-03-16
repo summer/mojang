@@ -6,8 +6,8 @@ import re
 
 import requests
 
-from mojang.http_client import HTTPClient
-from mojang.types import Profile, Skin, Cape, NameInformation
+from mojang._http_client import _HTTPClient
+from mojang._types import Profile, Skin, Cape, NameInformation
 from mojang.errors import (
     MojangError,
     BadRequest,
@@ -16,8 +16,10 @@ from mojang.errors import (
     MissingMinecraftProfile,
 )
 
+from mojang._utils import _assert_valid_username
 
-log = logging.getLogger(__name__)
+
+_log = logging.getLogger(__name__)
 
 
 _BASE_API_URL = "https://api.minecraftservices.com"
@@ -32,7 +34,7 @@ _XERRORS = {
 }
 
 
-class MojangAuth(HTTPClient):
+class MojangAuth(_HTTPClient):
     def __init__(
         self,
         email: Optional[str] = None,
@@ -52,7 +54,9 @@ class MojangAuth(HTTPClient):
         if bearer_token:
             self._set_authorization_header(bearer_token)
         elif email is None and password is None:
-            raise TypeError("Either an email/password or bearer token must be supplied.")
+            raise TypeError(
+                "Either an email/password or bearer token must be supplied."
+            )
         else:
             self._login()
 
@@ -63,9 +67,11 @@ class MojangAuth(HTTPClient):
             bearer_token = f"Bearer {bearer_token}"
 
         self.session.headers.update({"Authorization": f"{bearer_token}"})
- 
+
     def _validate_session(self) -> None:
-        resp = self.request("get", f"{_BASE_API_URL}/entitlements/mcstore", ignore_codes=[401])
+        resp = self.request(
+            "get", f"{_BASE_API_URL}/entitlements/mcstore", ignore_codes=[401]
+        )
 
         # The response content is empty if the authorization token isn't set or valid
         if not resp.text:
@@ -95,7 +101,9 @@ class MojangAuth(HTTPClient):
             "locale": "en",
         }
 
-        resp = self.request("get", "https://login.live.com/oauth20_authorize.srf", params=params)
+        resp = self.request(
+            "get", "https://login.live.com/oauth20_authorize.srf", params=params
+        )
 
         # Parses the values via regex since the HTML can't be parsed
         value = re.search(r'value="(.+?)"', resp.text)[0].replace('value="', "")[:-1]
@@ -136,7 +144,9 @@ class MojangAuth(HTTPClient):
             "TokenType": "JWT",
         }
 
-        resp = self.request("post", "https://user.auth.xboxlive.com/user/authenticate", json=json_data)
+        resp = self.request(
+            "post", "https://user.auth.xboxlive.com/user/authenticate", json=json_data
+        )
 
         xbl_token = resp.json()["Token"]
         user_hash = resp.json()["DisplayClaims"]["xui"][0]["uhs"]
@@ -241,13 +251,36 @@ class Client(MojangAuth):
                 Possible keys are `changed_at`, `created_at`, \
                 and `name_change_allowed`.
         """
-        data = self.request("get", f"{_BASE_API_URL}/minecraft/profile/namechange").json()
+        data = self.request(
+            "get", f"{_BASE_API_URL}/minecraft/profile/namechange"
+        ).json()
 
         return NameInformation(
             changed_at=data.get("changedAt"),
             created_at=data.get("createdAt"),
             name_change_allowed=data.get("nameChangeAllowed"),
         )
+
+    def _get_username_status(self, username: str):
+        """Check a username's status
+
+        Args:
+            username: The Minecraft username to check.
+
+        Note:
+            Possible return values include AVAILABLE, TAKEN, DUPLICATE, and NOT_ALLOWED
+            TAKEN - For every 1 and 2-character username, any username with invalid characters,
+            or any name with more than 16 characters.
+            DUPLICATE - The username is taken or pseudo-hard-deleted.
+        """
+
+        _assert_valid_username(username)
+
+        resp = self.request(
+            "get", f"{_BASE_API_URL}/minecraft/profile/name/{username}/available"
+        )
+
+        return resp.json()["status"]
 
     def is_username_available(self, username: str) -> bool:
         """Check if a username is available.
@@ -263,18 +296,7 @@ class Client(MojangAuth):
         Returns:
             `True` if the username is available; `False` if the username is invalid or already taken
         """
-        if len(username) < 2 or len(username) > 16:
-            raise ValueError("Username size must be between 3 and 16 characters")
-
-        resp = self.request("get", f"{_BASE_API_URL}/minecraft/profile/name/{username}/available")
-
-        data = resp.json()
-
-        if data.get("status"):
-            if data["status"] == "AVAILABLE":
-                return True
-
-        return False
+        return self._get_username_status(username) == "AVAILABLE"
 
     def is_username_blocked(self, username: str) -> bool:
         """
@@ -293,19 +315,7 @@ class Client(MojangAuth):
         Returns:
             `True` if the username is blocked; `False` if the username is not blocked
         """
-
-        if len(username) < 2 or len(username) > 16:
-            raise ValueError("Username size must be between 3 and 16 characters")
-
-        resp = self.request("get", f"{_BASE_API_URL}/minecraft/profile/name/{username}/available")
-
-        data = resp.json()
-
-        if data.get("status"):
-            if data["status"] == "NOT_ALLOWED":
-                return True
-
-        return False
+        return self._get_username_status(username) == "NOT_ALLOWED"
 
     def change_username(self, username: str) -> Dict[str, Any]:
         """Change your Minecraft username.
@@ -322,6 +332,7 @@ class Client(MojangAuth):
                 Possible keys are `success` (which contains `True` or `False`) and `error` with an error message \
                 (only if the function fails).
         """
+        _assert_valid_username(username)
 
         resp = self.request(
             "put",
@@ -334,7 +345,9 @@ class Client(MojangAuth):
 
         if resp.status_code == 400:
             try:
-                error = resp.json()["errorMessage"].replace("changeProfileName.profileName:", "")
+                error = resp.json()["errorMessage"].replace(
+                    "changeProfileName.profileName:", ""
+                )
             except (requests.JSONDecodeError, KeyError) as exc:
                 raise BadRequest(response=resp) from exc
 
@@ -375,17 +388,23 @@ class Client(MojangAuth):
             raise ValueError("Skin variant must be set to either slim or classic.")
 
         if image_path is None and url is None:
-            raise TypeError("Missing required parameters. Please supply a skin URL or a skin image path.")
+            raise TypeError(
+                "Missing required parameters. Please supply a skin URL or a skin image path."
+            )
 
         if url:
             json_payload = {"url": url, "variant": variant}
-            self.request("post", f"{_BASE_API_URL}/minecraft/profile/skins", json=json_payload)
+            self.request(
+                "post", f"{_BASE_API_URL}/minecraft/profile/skins", json=json_payload
+            )
         else:
             files = {
                 "file": open(f"{image_path}", "rb"),
                 "variant": (None, variant),
             }
-            self.request("post", f"{_BASE_API_URL}/minecraft/profile/skins", files=files)
+            self.request(
+                "post", f"{_BASE_API_URL}/minecraft/profile/skins", files=files
+            )
 
     def copy_skin(
         self,
@@ -406,7 +425,10 @@ class Client(MojangAuth):
         if username is None and uuid is None:
             raise TypeError("Either a username or a UUID must be supplied")
         if username:
-            resp = self.request("get", f"https://api.mojang.com/users/profiles/minecraft/{username}")
+            _assert_valid_username(username)
+            resp = self.request(
+                "get", f"https://api.mojang.com/users/profiles/minecraft/{username}"
+            )
             try:
                 uuid = resp.json()["id"]
             except requests.JSONDecodeError as exc:

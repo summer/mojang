@@ -4,12 +4,12 @@ import logging
 import json
 from typing import Any, List, Dict, Optional
 
-from mojang.types import UserProfile
-from mojang.http_client import HTTPClient
+from mojang._types import UserProfile
+from mojang._http_client import _HTTPClient
 from mojang.errors import MojangError
 
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 _API_BASE_URL = "https://api.mojang.com"
@@ -17,7 +17,7 @@ _SESSIONSERVER_BASE_URL = "https://sessionserver.mojang.com"
 _AUTHSERVER_BASE_URL = "https://authserver.mojang.com"
 
 
-class API(HTTPClient):
+class API(_HTTPClient):
     def get_uuid(
         self,
         username: str,
@@ -40,7 +40,6 @@ class API(HTTPClient):
         Returns:
             The UUID (`str`) or `None` if the username does not exist.
         """
-
         if timestamp:
             url = f"{_API_BASE_URL}/users/profiles/minecraft/{username}?at={timestamp}"
         else:
@@ -164,7 +163,9 @@ class API(HTTPClient):
         resp = self.request("get", f"{_SESSIONSERVER_BASE_URL}/blockedservers")
         return resp.text.splitlines()
 
-    def refresh_access_token(self, access_token: str, client_token: str) -> Dict[str, Any]:
+    def refresh_access_token(
+        self, access_token: str, client_token: str
+    ) -> Dict[str, Any]:
         """Refreshes access token
 
         Args:
@@ -181,7 +182,9 @@ class API(HTTPClient):
         }
 
         account = {}
-        data = self.request("post", f"{_AUTHSERVER_BASE_URL}/refresh", json=payload).json()
+        data = self.request(
+            "post", f"{_AUTHSERVER_BASE_URL}/refresh", json=payload
+        ).json()
 
         account["username"] = data["user"]["username"]
         account["uuid"] = data["user"]["id"]
