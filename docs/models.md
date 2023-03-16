@@ -2,7 +2,7 @@
 
 # Models / types
 
-::: mojang.types
+::: mojang._types
     rendering:
         show_if_no_docstring: true
         show_source: false
