@@ -429,7 +429,7 @@ class Client(MojangAuth):
             uuid: The UUID of the player whose skin you want to copy.
 
         Raises:
-            MojangError: If an invalid username or UUID is supplied.
+            ValueError: If an invalid username or UUID is supplied.
         """
         if username is None and uuid is None:
             raise TypeError("Either a username or a UUID must be supplied")
@@ -441,7 +441,7 @@ class Client(MojangAuth):
             try:
                 uuid = resp.json()["id"]
             except requests.JSONDecodeError as exc:
-                raise MojangError("Username does not exist") from exc
+                raise ValueError("Username does not exist") from exc
 
         resp = self.request(
             "get",
