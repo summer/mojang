@@ -1,6 +1,5 @@
 def _assert_valid_username(username: str) -> None:
     """Raises a ValueError if a username is considered invalid"""
-    dict(valid=False)
 
     if len(username) < 3 or len(username) > 16:
         raise ValueError(
