@@ -1,7 +1,7 @@
 import ast
 import base64
 import logging
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import re
 
 import requests
@@ -24,17 +24,17 @@ _log = logging.getLogger(__name__)
 
 _BASE_API_URL = "https://api.minecraftservices.com"
 
-# Potential Xbox Live login failure errors
-_XERRORS = {
-    2148916233: "The account doesn't have an Xbox account.",
-    2148916235: "The account is from a country where Xbox Live is not available/banned.",
-    2148916236: "The account needs adult verification on Xbox page. (South Korea)",
-    2148916237: "The account needs adult verification on Xbox page. (South Korea)",
-    2148916238: "The account is a child (under 18) and cannot proceed unless the account is added to a Family by an adult.",
-}
-
 
 class MojangAuth(_HTTPClient):
+    # Potential Xbox Live login failure errors
+    _XERRORS = {
+        2148916233: "The account doesn't have an Xbox account.",
+        2148916235: "The account is from a country where Xbox Live is not available/banned.",
+        2148916236: "The account needs adult verification on Xbox page. (South Korea)",
+        2148916237: "The account needs adult verification on Xbox page. (South Korea)",
+        2148916238: "The account is a child (under 18) and cannot proceed unless the account is added to a Family by an adult.",
+    }
+
     def __init__(
         self,
         email: Optional[str] = None,
@@ -64,9 +64,16 @@ class MojangAuth(_HTTPClient):
 
     def _set_authorization_header(self, bearer_token: str) -> None:
         if not bearer_token.startswith("Bearer"):
+            _log.debug("Appended Bearer string onto the token as it was missing")
             bearer_token = f"Bearer {bearer_token}"
 
+        _log.debug(f"Setting authorization header to {bearer_token}")
         self.session.headers.update({"Authorization": f"{bearer_token}"})
+
+    def _has_minecraft_profile(self) -> bool:
+        # This check still needs to be verified
+        resp = self.request("get", f"{_BASE_API_URL}/minecraft/profile")
+        return bool(resp.ok)
 
     def _validate_session(self) -> None:
         resp = self.request(
@@ -85,9 +92,7 @@ class MojangAuth(_HTTPClient):
         if not bool(data["items"]):
             raise MissingMinecraftLicense
 
-        # This check still needs to be verified
-        resp = self.request("get", f"{_BASE_API_URL}/minecraft/profile")
-        if not resp.ok:
+        if not self._has_minecraft_profile():
             raise MissingMinecraftProfile
 
     def _get_oauth2_token_and_url(self) -> Tuple[str, str]:
@@ -171,7 +176,7 @@ class MojangAuth(_HTTPClient):
         if resp.status_code == 401:
             data = resp.json()
             if data.get("XErr"):
-                if data["XErr"] in _XERRORS:
+                if data["XErr"] in self._XERRORS:
                     raise LoginFailure(data["XErr"])
             raise MojangError(response=resp)
 
@@ -261,6 +266,10 @@ class Client(MojangAuth):
             name_change_allowed=data.get("nameChangeAllowed"),
         )
 
+    def get_billing_info(self) -> List[Dict[str, Any]]:
+        """Get general billing info and credit card information stored on the account."""
+        return self.request("get", f"{_BASE_API_URL}/creditcards").json()
+
     def _get_username_status(self, username: str):
         """Check a username's status
 
@@ -318,7 +327,7 @@ class Client(MojangAuth):
         return self._get_username_status(username) == "NOT_ALLOWED"
 
     def change_username(self, username: str) -> Dict[str, Any]:
-        """Change your Minecraft username.
+        """Change the profile's Minecraft username.
 
         Warning: Limitations
             You can only change your username once every 30 days. A username must be
@@ -472,5 +481,9 @@ class Client(MojangAuth):
         self.change_skin(url=profile.skins[0].url, variant=variant)
 
     def reset_skin(self) -> None:
-        """Reset your Minecraft skin back to the default one"""
+        """Reset the profile's Minecraft skin to the default one"""
         self.request("delete", f"{_BASE_API_URL}/minecraft/profile/skins/active")
+
+    def disable_cape(self) -> None:
+        """Disable the profile's cape so it is no longer shown"""
+        self.request("delete", f"{_BASE_API_URL}/minecraft/profile/capes/active")

@@ -17,7 +17,7 @@ from mojang.errors import (
     Unauthorized,
 )
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 class _HTTPClient:
@@ -62,7 +62,7 @@ class _HTTPClient:
 
         resp = self.session.request(method, url, **kwargs)
 
-        log.debug(f"Making API request: {method} {url}\n")
+        _log.debug(f"Making API request: {method} {url}\n")
 
         if resp.ok:
             return resp
@@ -85,7 +85,7 @@ class _HTTPClient:
 
         if resp.status_code == 429:
             if self.retry_on_ratelimit:
-                log.warning(
+                _log.warning(
                     f"We are being ratelimited. Sleeping for {self.ratelimit_sleep_time} seconds."
                 )
                 time.sleep(self.ratelimit_sleep_time)

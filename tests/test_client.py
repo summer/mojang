@@ -23,6 +23,15 @@ class TestClient(unittest.TestCase):
         available = self.client.is_username_available(AVAILABLE_USERNAME)
         self.assertTrue(available)
 
+    def get_billing_info(self):
+        data = self.client.get_billing_info()
+        expected_keys = ["id", "userId", "billingAddress", "createdAt"]
+
+        keys = data.keys()
+
+        for expected_key in expected_keys:
+            self.assertIn(expected_key, keys)
+
     def test_is_username_blocked(self):
         blocked = self.client.is_username_blocked(NOTCH_USERNAME)
         self.assertFalse(blocked)
@@ -48,6 +57,9 @@ class TestClient(unittest.TestCase):
 
     def test_reset_skin(self):
         self.client.reset_skin()
+
+    def test_disable_cape(self):
+        self.client.disable_cape()
 
 
 if __name__ == "__main__":
